@@ -1,15 +1,32 @@
-import { pokemonRepo } from "../repository/pokemons.repo";
+import { getRandomPokemonReq } from "../interfaces/users.interfaces";
+import { pokemonRepository } from "../repository/pokemons.repository";
+import { userPokemonRepository } from "../repository/user-pokemon.repository";
+import { userRepository } from "../repository/users.repository";
 
 export const pokemonService = {
   getRandomPokemon,
 };
 
 async function getRandomPokemon(userId: string) {
-  const ownedPokemonIds = await pokemonRepo.getUserPokemons(userId);
-  const availablePokemons = await pokemonRepo.getRandomPokemon(ownedPokemonIds);
+  if (typeof userId !== "string") {
+    throw new Error("User ID is required and must be a string");
+  }
 
-  if (!availablePokemons.length) {
-    throw new Error("No available Pokémon found");
+  const userExists = await userRepository.checkUserExists(userId);
+  if (!userExists) {
+    throw new Error("User not found");
+  }
+
+  const ownedPokemonIds = await userPokemonRepository.getUserPokemons(userId);
+
+  const listedIds = `('${ownedPokemonIds
+    .map((pokemon) => pokemon.pokemon_id)
+    .join("', '")}')`;
+
+  const availablePokemons = await pokemonRepository.getRandomPokemon(listedIds);
+
+  if (!availablePokemons || availablePokemons.length === 0) {
+    return [];
   }
 
   return availablePokemons[0];

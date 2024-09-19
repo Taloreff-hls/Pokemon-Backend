@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { getRandomPokemon } from "../controller/pokemons.controller";
-import { validateUserId } from "../validation/pokemons.validation";
+import { pokemonController } from "../controller/pokemons.controller";
+import { pokemonsValidation } from "../validation/pokemons.validation";
 
 const router = Router();
 
@@ -91,6 +91,10 @@ const router = Router();
  *                 error: "An error occurred while fetching pokemons"
  */
 
-router.get("/random", validateUserId, getRandomPokemon);
+router.get(
+  "/random",
+  pokemonsValidation.validateGetRandomPokemon,
+  pokemonController.getRandomPokemon
+);
 
 export default router;

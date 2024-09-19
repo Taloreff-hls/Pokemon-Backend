@@ -1,19 +1,28 @@
 import { Request, Response } from "express";
 import { pokemonService } from "../service/pokemons.service";
 
-export const getRandomPokemon = async (req: Request, res: Response) => {
-  try {
-    const { userId } = req.query as { userId: string };
+export const pokemonController = {
+  getRandomPokemon,
+};
 
-    if (!userId) {
-      return res.status(400).json({ error: "User ID is required" });
-    }
+async function getRandomPokemon(req: Request, res: Response) {
+  try {
+    const userId = req.query.userId as string;
 
     const pokemon = await pokemonService.getRandomPokemon(userId);
-    res.json(pokemon);
+
+    if (!pokemon) {
+      return res.status(200).json([]);
+    }
+
+    res.status(200).json(pokemon);
   } catch (error) {
-    res
+    const err = error as Error;
+    if (err.message === "User not found") {
+      return res.status(404).json({ error: "User not found" });
+    }
+    return res
       .status(500)
       .json({ error: "An error occurred while fetching pokemons" });
   }
-};
+}

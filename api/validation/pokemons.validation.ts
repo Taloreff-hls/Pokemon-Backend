@@ -1,11 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import Joi from "joi";
 
-export const validateUserId = (
+export const pokemonsValidation = {
+  validateGetRandomPokemon,
+};
+
+function validateGetRandomPokemon(
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+) {
   const schema = Joi.object({
     userId: Joi.string().uuid().required(),
   });
@@ -17,4 +21,4 @@ export const validateUserId = (
   }
 
   next();
-};
+}
