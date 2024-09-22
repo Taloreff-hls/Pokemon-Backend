@@ -3,7 +3,6 @@ import { app } from "../../server";
 import { prisma } from "../utils/prisma";
 import { pokemonService } from "../service/pokemons.service";
 import { Pokemon } from "../interfaces/pokemons.interfaces";
-import { v4 as uuidv4 } from "uuid";
 
 describe("POST /pokemons", () => {
   let userId: string;
@@ -639,11 +638,181 @@ describe("POST /pokemons", () => {
     expect(response.body[1].hp).toBe(100);
   });
 
+  it("should return an empty array if there are no Pokémon in the table", async () => {
+    const response = await request(app)
+      .post(`/pokemons`)
+      .send({ name: "CCC" })
+      .expect(200);
+
+    expect(response.body).toEqual([]);
+  });
+
+  it("should return an empty array for a user with no owned pokemons", async () => {
+    const response = await request(app)
+      .post("/pokemons")
+      .send({ user_id: userId })
+      .expect(200);
+
+    expect(response.body).toEqual([]);
+  });
+
   it("should return a 400 error for invalid pagination values", async () => {
     const response = await request(app).post("/pokemons?page=0&limit=101");
 
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty("error");
+  });
+
+  it("should return an empty array for a page with no results", async () => {
+    await prisma.pokemon.createMany({
+      data: [
+        {
+          id: "1",
+          name: "Bulbasaur",
+          hp: 45,
+          attack: 49,
+          defense: 49,
+          speed: 45,
+          description: "A grass Pokémon",
+          image: "image_url",
+          type: ["Grass"],
+          abilities: ["Overgrow"],
+          height: "0.7 m",
+          weight: "6.9 kg",
+        },
+        {
+          id: "2",
+          name: "Charmander",
+          hp: 39,
+          attack: 52,
+          defense: 43,
+          speed: 65,
+          description: "A fire Pokémon",
+          image: "image_url",
+          type: ["Fire"],
+          abilities: ["Blaze"],
+          height: "0.6 m",
+          weight: "8.5 kg",
+        },
+        {
+          id: "3",
+          name: "Squirtle",
+          hp: 44,
+          attack: 48,
+          defense: 65,
+          speed: 43,
+          description: "A water Pokémon",
+          image: "image_url",
+          type: ["Water"],
+          abilities: ["Torrent"],
+          height: "0.5 m",
+          weight: "9.0 kg",
+        },
+        {
+          id: "4",
+          name: "Caterpie",
+          hp: 40,
+          attack: 50,
+          defense: 60,
+          speed: 70,
+          description: "A bug Pokémon",
+          image: "image_url",
+          type: ["Bug"],
+          abilities: ["Shield Dust"],
+          height: "0.5 m",
+          weight: "2.9 kg",
+        },
+        {
+          id: "5",
+          name: "Pikachu",
+          hp: 100,
+          attack: 48,
+          defense: 65,
+          speed: 43,
+          description: "An electric Pokémon",
+          image: "image_url",
+          type: ["Electric"],
+          abilities: ["Static"],
+          height: "0.5 m",
+          weight: "9.0 kg",
+        },
+        {
+          id: "6",
+          name: "Claydol",
+          hp: 100,
+          attack: 70,
+          defense: 35,
+          speed: 72,
+          description: "A normal Pokémon",
+          image: "image_url",
+          type: ["Normal"],
+          abilities: ["Run Away"],
+          height: "0.3 m",
+          weight: "3.5 kg",
+        },
+        {
+          id: "7",
+          name: "Clefairy",
+          hp: 70,
+          attack: 45,
+          defense: 40,
+          speed: 56,
+          description: "A flying Pokémon",
+          image: "image_url",
+          type: ["Normal", "Flying"],
+          abilities: ["Keen Eye"],
+          height: "0.3 m",
+          weight: "1.8 kg",
+        },
+        {
+          id: "8",
+          name: "Cobalion",
+          hp: 115,
+          attack: 45,
+          defense: 20,
+          speed: 20,
+          description: "A fairy Pokémon",
+          image: "image_url",
+          type: ["Fairy"],
+          abilities: ["Cute Charm"],
+          height: "0.5 m",
+          weight: "5.5 kg",
+        },
+        {
+          id: "9",
+          name: "Corphish",
+          hp: 80,
+          attack: 33,
+          defense: 35,
+          speed: 55,
+          description: "A poison Pokémon",
+          image: "image_url",
+          type: ["Poison", "Flying"],
+          abilities: ["Inner Focus"],
+          height: "0.8 m",
+          weight: "7.5 kg",
+        },
+        {
+          id: "10",
+          name: "Meowth",
+          hp: 40,
+          attack: 45,
+          defense: 35,
+          speed: 90,
+          description: "A normal Pokémon",
+          image: "image_url",
+          type: ["Normal"],
+          abilities: ["Pickup"],
+          height: "0.4 m",
+          weight: "4.2 kg",
+        },
+      ],
+    });
+    const response = await request(app)
+      .post("/pokemons?page=3&limit=10")
+      .expect(200);
+
+    expect(response.body).toEqual([]);
   });
 
   it("should return a 400 error for an invalid sort option", async () => {

@@ -13,7 +13,7 @@ async function findPokemons({
   page,
   limit,
   filters,
-}: PokemonQueryOptions): Promise<Pokemon[]> {
+}: PokemonQueryOptions) {
   const { user_id } = filters || {};
 
   let pokemonIds: string[] = [];
