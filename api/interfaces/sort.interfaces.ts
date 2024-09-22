@@ -7,7 +7,7 @@ export interface SortOption {
 
 export interface Filters {
   name?: string;
-  userId?: string;
+  user_id?: string;
 }
 
 export interface PokemonQueryOptions {
@@ -15,4 +15,5 @@ export interface PokemonQueryOptions {
   page: number;
   limit: number;
   filters?: Filters;
+  pokemonIds?: string[];
 }

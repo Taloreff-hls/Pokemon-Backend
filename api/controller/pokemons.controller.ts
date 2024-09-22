@@ -6,8 +6,8 @@ export const listPokemons = async (req: Request, res: Response) => {
   try {
     const { sort, page, limit } = req.query;
 
-    const parsedPage = page ? parseInt(page as string, 10) : 1;
-    const parsedLimit = limit ? parseInt(limit as string, 10) : 10;
+    const parsedPage = page ? +page : 1;
+    const parsedLimit = limit ? +limit : 10;
 
     const mappedSort = sort ? mapSortOption(sort as string) : undefined;
 
