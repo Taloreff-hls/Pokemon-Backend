@@ -15,9 +15,7 @@ async function getRandomPokemon(userId: string) {
 
   const ownedPokemonIds = await userPokemonRepository.getUserPokemons(userId);
 
-  const listedIds = `('${ownedPokemonIds
-    .map((pokemon) => pokemon.pokemon_id)
-    .join("', '")}')`;
+  const listedIds = ownedPokemonIds.map((pokemon) => pokemon.pokemon_id);
 
   const availablePokemons = await pokemonRepository.getRandomPokemon(listedIds);
 

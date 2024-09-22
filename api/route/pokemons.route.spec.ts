@@ -165,7 +165,7 @@ describe("GET /pokemons/random", () => {
       .query({ userId })
       .expect(200);
 
-    expect(response.body).toEqual([]); // Ensure the response is an empty array
+    expect(response.body).toEqual([]);
   });
 
   it("should return a 500 error if there is an internal service error", async () => {
