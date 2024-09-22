@@ -11,15 +11,14 @@ async function getRandomPokemon(req: Request, res: Response) {
 
     const pokemon = await pokemonService.getRandomPokemon(userId);
 
-    if (!pokemon) {
-      return res.status(200).json([]);
-    }
-
     res.status(200).json(pokemon);
   } catch (error) {
     const err = error as Error;
     if (err.message === "User not found") {
       return res.status(404).json({ error: "User not found" });
+    }
+    if (err.message === "No available pokemons") {
+      return res.status(200).json([]);
     }
     return res
       .status(500)

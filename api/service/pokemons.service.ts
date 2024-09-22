@@ -26,7 +26,7 @@ async function getRandomPokemon(userId: string) {
   const availablePokemons = await pokemonRepository.getRandomPokemon(listedIds);
 
   if (!availablePokemons || availablePokemons.length === 0) {
-    return [];
+    throw new Error("No available pokemons");
   }
 
   return availablePokemons[0];
