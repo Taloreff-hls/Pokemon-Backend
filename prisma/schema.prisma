@@ -32,7 +32,7 @@ model User {
   id        String       @id @default(uuid())
   email     String    @unique
   pokemons  UserPokemon[]
-  createdAt DateTime  @default(now())
+  created_at DateTime  @default(now())
 }
 
 
@@ -55,11 +55,11 @@ model Pokemon {
 
 model UserPokemon {
   id        String       @id @default(uuid())
-  userId    String
-  pokemonId String
+  user_id    String
+  pokemon_id String
 
-  user      User     @relation(fields: [userId], references: [id])
-  pokemon   Pokemon  @relation(fields: [pokemonId], references: [id])
+  user      User     @relation(fields: [user_id], references: [id])
+  pokemon   Pokemon  @relation(fields: [pokemon_id], references: [id])
 
-  @@unique([userId, pokemonId])
+  @@unique([user_id, pokemon_id])
 }
