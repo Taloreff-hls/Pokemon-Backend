@@ -7,19 +7,17 @@ export const pokemonRepository = {
 };
 
 async function getRandomPokemon(listedIds: string[]) {
-  const query =
+  const filter =
     listedIds.length > 0
-      ? Prisma.sql`
+      ? `WHERE id NOT IN (${listedIds.map((id) => `'${id}'`).join(", ")})`
+      : "";
+
+  const query = Prisma.raw(`
     SELECT * FROM "Pokemon"
-    WHERE id NOT IN (${Prisma.join(listedIds)})
+    ${filter}
     ORDER BY RANDOM()
     LIMIT 1
-  `
-      : Prisma.sql`
-    SELECT * FROM "Pokemon"
-    ORDER BY RANDOM()
-    LIMIT 1
-  `;
+  `);
 
   return await prisma.$queryRaw<Pokemon[]>(query);
 }

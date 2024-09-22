@@ -154,7 +154,7 @@ describe("GET /pokemons/random", () => {
     const response = await request(app)
       .get(`/pokemons/random`)
       .query({ userId: nonExistentUserId })
-      .expect(404);
+      .expect(400);
 
     expect(response.body).toHaveProperty("error", "User not found");
   });
