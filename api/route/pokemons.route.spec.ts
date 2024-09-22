@@ -8,14 +8,11 @@ describe("GET /pokemons/random", () => {
   let userId: string;
 
   beforeEach(async () => {
-    // 1. Delete from userPokemon first to avoid foreign key issues
     await prisma.userPokemon.deleteMany({});
 
-    // 2. Delete from user and pokemon after userPokemon has been cleared
     await prisma.pokemon.deleteMany({});
     await prisma.user.deleteMany({});
 
-    // Create a user for each test (this can be used across tests)
     const user = await prisma.user.create({
       data: {
         email: "testuser@example.com",
@@ -25,7 +22,6 @@ describe("GET /pokemons/random", () => {
   });
 
   it("should return a random Pokémon that is not owned by the user", async () => {
-    // Create pokemons
     await prisma.pokemon.createMany({
       data: [
         {
