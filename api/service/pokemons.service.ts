@@ -8,10 +8,6 @@ export const pokemonService = {
 };
 
 async function getRandomPokemon(userId: string) {
-  if (typeof userId !== "string") {
-    throw new Error("User ID is required and must be a string");
-  }
-
   const userExists = await userRepository.checkUserExists(userId);
   if (!userExists) {
     throw new Error("User not found");
