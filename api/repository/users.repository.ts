@@ -5,8 +5,8 @@ export const userRepository = {
 };
 
 async function checkUserExists(userId: string) {
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.count({
     where: { id: userId },
   });
-  return !!user;
+  return user;
 }
