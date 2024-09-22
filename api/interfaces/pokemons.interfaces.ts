@@ -14,3 +14,7 @@ export interface Pokemon {
   weight: string;
   abilities: [string][];
 }
+
+export interface getUserPokemonQuery {
+  pokemon_id: string;
+}

@@ -3,3 +3,7 @@ export interface User {
   email: string;
   createdAt: Date;
 }
+
+export interface getRandomPokemonReq {
+  userId: string;
+}
