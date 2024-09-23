@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 import pokemonRoutes from "./api/route/pokemons.route";
 
 dotenv.config();
@@ -21,6 +23,28 @@ if (process.env.NODE_ENV === "production") {
 
 app.use(cors());
 app.use(express.json());
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Pokémon API",
+      version: "1.0.0",
+      description: "API for Pokémon Web game",
+    },
+    servers: [
+      {
+        url: "http://localhost:4000",
+        description: "Local Development Server",
+      },
+    ],
+  },
+  apis: ["./api/route/*.ts"],
+};
+
+// Initialize Swagger docs
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/pokemons", pokemonRoutes);
 

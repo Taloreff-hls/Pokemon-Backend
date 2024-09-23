@@ -15,7 +15,7 @@ describe("POST /pokemons", () => {
 
     const user = await prisma.user.create({
       data: {
-        email: "testuser@example.com",
+        email: "test@example.com",
       },
     });
     userId = user.id;
