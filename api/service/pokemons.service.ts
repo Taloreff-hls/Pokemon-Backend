@@ -1,4 +1,3 @@
-import { getRandomPokemonReq } from "../interfaces/users.interfaces";
 import { pokemonRepository } from "../repository/pokemons.repository";
 import { userPokemonRepository } from "../repository/user-pokemon.repository";
 import { userRepository } from "../repository/users.repository";
