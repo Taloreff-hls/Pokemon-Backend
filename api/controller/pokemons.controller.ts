@@ -48,6 +48,10 @@ async function getPokemons(req: Request, res: Response) {
 
     res.json(pokemons);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch pokemons" });
+    const err = error as Error;
+    if (err.message === "No available pokemons") {
+      return res.status(200).json([]);
+    }
+    return res.status(500).json({ error: "Failed to fetch pokemons" });
   }
 }
