@@ -29,5 +29,13 @@ async function getRandomPokemon(userId: string) {
 }
 
 async function getPokemons(options: PokemonQueryOptions) {
-  return await pokemonRepository.getPokemons(options);
+  const { filters } = options;
+
+  const listedIds = filters?.user_id
+    ? (await userPokemonRepository.getUserPokemons(filters.user_id)).map(
+        (pokemon) => pokemon.pokemon_id
+      )
+    : undefined;
+
+  return pokemonRepository.getPokemons(options, listedIds);
 }

@@ -1,6 +1,5 @@
 import { Pokemon } from "../interfaces/pokemons.interfaces";
 import { PokemonQueryOptions } from "../interfaces/sort.interfaces";
-import { UserPokemonId } from "../interfaces/userPokemon.interfaces";
 import { prisma } from "../utils/prisma";
 import { Prisma } from "@prisma/client";
 import { buildPokemonQuery } from "../utils/queryBuilder";
@@ -26,23 +25,10 @@ async function getRandomPokemon(listedIds: string[]) {
   return await prisma.$queryRaw<Pokemon[]>(query);
 }
 
-async function getPokemons({
-  sort,
-  page,
-  limit,
-  filters,
-}: PokemonQueryOptions) {
-  const { user_id } = filters || {};
-
-  let pokemonIds: string[] = [];
-
-  if (user_id) {
-    const userPokemons = await prisma.$queryRaw<UserPokemonId[]>`
-      SELECT pokemon_id FROM "UserPokemon" WHERE user_id = ${user_id}
-    `;
-    pokemonIds = userPokemons.map((up) => up.pokemon_id);
-  }
-
+async function getPokemons(
+  { sort, page, limit, filters }: PokemonQueryOptions,
+  pokemonIds?: string[]
+) {
   const query = buildPokemonQuery({
     sort,
     page,
