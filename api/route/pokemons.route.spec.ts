@@ -203,7 +203,7 @@ describe("POST /pokemons/users/:id/catch", () => {
 
     const pokemon = await prisma.pokemon.create({
       data: {
-        id: uuidv4(),
+        id: "1",
         name: "Bulbasaur",
         hp: 45,
         attack: 49,
