@@ -30,7 +30,7 @@ function validateCatchPokemon(req: Request, res: Response, next: NextFunction) {
   });
 
   const bodySchema = Joi.object({
-    pokemonId: Joi.string().uuid().required(),
+    pokemonId: Joi.string().required(),
   });
 
   const { error: paramsError } = schema.validate(req.params);
