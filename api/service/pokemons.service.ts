@@ -5,6 +5,7 @@ import { userRepository } from "../repository/users.repository";
 
 export const pokemonService = {
   getRandomPokemon,
+  catchPokemon,
 };
 
 async function getRandomPokemon(userId: string) {
@@ -24,4 +25,27 @@ async function getRandomPokemon(userId: string) {
   }
 
   return availablePokemons[0];
+}
+
+async function catchPokemon(userId: string, pokemonId: string) {
+  const userExists = await userRepository.checkUserExists(userId);
+  if (!userExists) {
+    throw new Error("User not found");
+  }
+
+  const pokemonExists = await pokemonRepository.checkPokemonExists(pokemonId);
+  if (!pokemonExists) {
+    throw new Error("Pokémon not found");
+  }
+
+  const alreadyOwned = await userPokemonRepository.checkUserOwnsPokemon(
+    userId,
+    pokemonId
+  );
+
+  if (alreadyOwned) {
+    throw new Error("Pokemon already owned");
+  }
+
+  return await userPokemonRepository.addPokemonToUser(userId, pokemonId);
 }

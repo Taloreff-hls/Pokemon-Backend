@@ -184,3 +184,146 @@ describe("GET /pokemons/random", () => {
     );
   });
 });
+
+describe("POST /pokemons/users/:id/catch", () => {
+  let userId: string;
+  let pokemonId: string;
+
+  beforeEach(async () => {
+    await prisma.userPokemon.deleteMany({});
+    await prisma.pokemon.deleteMany({});
+    await prisma.user.deleteMany({});
+
+    const user = await prisma.user.create({
+      data: {
+        email: "testuser@example.com",
+      },
+    });
+    userId = user.id;
+
+    const pokemon = await prisma.pokemon.create({
+      data: {
+        id: uuidv4(),
+        name: "Bulbasaur",
+        hp: 45,
+        attack: 49,
+        defense: 49,
+        speed: 45,
+        description: "A grass Pokémon",
+        image: "image_url",
+        type: ["Grass"],
+        abilities: ["Overgrow"],
+        height: "0.7 m",
+        weight: "6.9 kg",
+      },
+    });
+    pokemonId = pokemon.id;
+  });
+
+  it("should catch a new Pokémon and add it to the user's collection", async () => {
+    const response = await request(app)
+      .post(`/pokemons/users/${userId}/catch`)
+      .send({ pokemonId })
+      .expect(201);
+
+    expect(response.body).toHaveProperty("user_id", userId);
+    expect(response.body).toHaveProperty("pokemon_id", pokemonId);
+
+    const caughtPokemon = await prisma.userPokemon.findFirst({
+      where: {
+        user_id: userId,
+        pokemon_id: pokemonId,
+      },
+    });
+
+    expect(caughtPokemon).not.toBeNull();
+  });
+
+  it("should return a 409 error if the user already owns the Pokémon", async () => {
+    await prisma.userPokemon.create({
+      data: {
+        user_id: userId,
+        pokemon_id: pokemonId,
+      },
+    });
+
+    const response = await request(app)
+      .post(`/pokemons/users/${userId}/catch`)
+      .send({ pokemonId })
+      .expect(409);
+
+    expect(response.body).toHaveProperty(
+      "error",
+      "This Pokémon is already in your collection"
+    );
+  });
+
+  it("should return a 400 error for an invalid userId", async () => {
+    const invalidUserId = -1;
+
+    const response = await request(app)
+      .post(`/pokemons/users/${invalidUserId}/catch`)
+      .send({ pokemonId })
+      .expect(400);
+
+    expect(response.body).toHaveProperty("error", '"id" must be a valid GUID');
+  });
+
+  it("should return a 400 error if the user does not exist", async () => {
+    const nonExistentUserId = uuidv4();
+
+    const response = await request(app)
+      .post(`/pokemons/users/${nonExistentUserId}/catch`)
+      .send({ pokemonId })
+      .expect(400);
+
+    expect(response.body).toHaveProperty("error", "User not found");
+  });
+
+  it("should return a 400 error for an invalid pokemonId", async () => {
+    const invalidPokemonId = -1;
+
+    const response = await request(app)
+      .post(`/pokemons/users/${userId}/catch`)
+      .send({ pokemonId: invalidPokemonId })
+      .expect(400);
+
+    expect(response.body).toHaveProperty(
+      "error",
+      '"pokemonId" must be a string'
+    );
+  });
+
+  it("should return a 400 error if the pokemonId is missing", async () => {
+    const response = await request(app)
+      .post(`/pokemons/users/${userId}/catch`)
+      .send({})
+      .expect(400);
+
+    expect(response.body).toHaveProperty("error", '"pokemonId" is required');
+  });
+
+  it("should return a 404 error if the Pokémon does not exist", async () => {
+    const nonExistentPokemonId = uuidv4();
+
+    const response = await request(app)
+      .post(`/pokemons/users/${userId}/catch`)
+      .send({ pokemonId: nonExistentPokemonId })
+      .expect(404);
+
+    expect(response.body).toHaveProperty("error", "Pokémon not found");
+  });
+
+  it("should return a 500 error if the service fails", async () => {
+    jest.spyOn(pokemonService, "catchPokemon").mockImplementation(() => {
+      throw new Error("Internal Server Error");
+    });
+
+    const response = await request(app)
+      .post(`/pokemons/users/${userId}/catch`)
+      .send({ pokemonId });
+
+    expect(response.status).toBe(500);
+    expect(response.body).toHaveProperty("error", "Failed to catch Pokémon");
+  });
+});

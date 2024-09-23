@@ -97,4 +97,10 @@ router.get(
   pokemonController.getRandomPokemon
 );
 
+router.post(
+  "/users/:id/catch",
+  pokemonsValidation.validateCatchPokemon,
+  pokemonController.catchPokemon
+);
+
 export default router;
