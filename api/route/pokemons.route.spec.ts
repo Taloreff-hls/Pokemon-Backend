@@ -200,7 +200,15 @@ describe("POST /pokemons/users/:id/catch", () => {
       },
     });
     userId = user.id;
+  });
 
+  afterAll(async () => {
+    await prisma.userPokemon.deleteMany({});
+    await prisma.pokemon.deleteMany({});
+    await prisma.user.deleteMany({});
+  });
+
+  it("should catch a new Pokémon and add it to the user's collection", async () => {
     const pokemon = await prisma.pokemon.create({
       data: {
         id: "1",
@@ -218,9 +226,7 @@ describe("POST /pokemons/users/:id/catch", () => {
       },
     });
     pokemonId = pokemon.id;
-  });
 
-  it("should catch a new Pokémon and add it to the user's collection", async () => {
     const response = await request(app)
       .post(`/pokemons/users/${userId}/catch`)
       .send({ pokemonId })
@@ -240,6 +246,24 @@ describe("POST /pokemons/users/:id/catch", () => {
   });
 
   it("should return a 409 error if the user already owns the Pokémon", async () => {
+    const pokemon = await prisma.pokemon.create({
+      data: {
+        id: "1",
+        name: "Bulbasaur",
+        hp: 45,
+        attack: 49,
+        defense: 49,
+        speed: 45,
+        description: "A grass Pokémon",
+        image: "image_url",
+        type: ["Grass"],
+        abilities: ["Overgrow"],
+        height: "0.7 m",
+        weight: "6.9 kg",
+      },
+    });
+    pokemonId = pokemon.id;
+
     await prisma.userPokemon.create({
       data: {
         user_id: userId,
@@ -259,6 +283,24 @@ describe("POST /pokemons/users/:id/catch", () => {
   });
 
   it("should return a 400 error for an invalid userId", async () => {
+    const pokemon = await prisma.pokemon.create({
+      data: {
+        id: "1",
+        name: "Bulbasaur",
+        hp: 45,
+        attack: 49,
+        defense: 49,
+        speed: 45,
+        description: "A grass Pokémon",
+        image: "image_url",
+        type: ["Grass"],
+        abilities: ["Overgrow"],
+        height: "0.7 m",
+        weight: "6.9 kg",
+      },
+    });
+    pokemonId = pokemon.id;
+
     const invalidUserId = -1;
 
     const response = await request(app)
@@ -270,6 +312,24 @@ describe("POST /pokemons/users/:id/catch", () => {
   });
 
   it("should return a 400 error if the user does not exist", async () => {
+    const pokemon = await prisma.pokemon.create({
+      data: {
+        id: "1",
+        name: "Bulbasaur",
+        hp: 45,
+        attack: 49,
+        defense: 49,
+        speed: 45,
+        description: "A grass Pokémon",
+        image: "image_url",
+        type: ["Grass"],
+        abilities: ["Overgrow"],
+        height: "0.7 m",
+        weight: "6.9 kg",
+      },
+    });
+    pokemonId = pokemon.id;
+
     const nonExistentUserId = uuidv4();
 
     const response = await request(app)
@@ -315,6 +375,24 @@ describe("POST /pokemons/users/:id/catch", () => {
   });
 
   it("should return a 500 error if the service fails", async () => {
+    const pokemon = await prisma.pokemon.create({
+      data: {
+        id: "1",
+        name: "Bulbasaur",
+        hp: 45,
+        attack: 49,
+        defense: 49,
+        speed: 45,
+        description: "A grass Pokémon",
+        image: "image_url",
+        type: ["Grass"],
+        abilities: ["Overgrow"],
+        height: "0.7 m",
+        weight: "6.9 kg",
+      },
+    });
+    pokemonId = pokemon.id;
+
     jest.spyOn(pokemonService, "catchPokemon").mockImplementation(() => {
       throw new Error("Internal Server Error");
     });
