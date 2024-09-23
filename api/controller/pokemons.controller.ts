@@ -32,8 +32,8 @@ async function getPokemons(req: Request, res: Response) {
   try {
     const { sort, page, limit } = req.query;
 
-    const parsedPage = page ? +page : 1;
-    const parsedLimit = limit ? +limit : 10;
+    const parsedPage = +page!;
+    const parsedLimit = +limit!;
 
     const mappedSort = sort ? mapSortOption(sort as string) : undefined;
 

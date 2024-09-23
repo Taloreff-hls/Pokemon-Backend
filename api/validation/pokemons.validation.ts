@@ -24,7 +24,7 @@ function validateGetRandomPokemon(
 }
 
 function validateGetPokemons(req: Request, res: Response, next: NextFunction) {
-  const schema = Joi.object({
+  const querySchema = Joi.object({
     sort: Joi.string()
       .valid(
         "Alphabetical A-Z",
@@ -37,22 +37,31 @@ function validateGetPokemons(req: Request, res: Response, next: NextFunction) {
       .optional(),
     page: Joi.number().integer().min(1).default(1),
     limit: Joi.number().integer().min(1).max(100).default(10),
-    filter: Joi.object({
-      name: Joi.string().optional(),
-      user_id: Joi.string().uuid().optional(),
-    }).optional(),
   });
 
-  const validationData = {
-    ...req.query,
-    filter: req.body.filter,
-  };
+  const bodySchema = Joi.object({
+    name: Joi.string().optional(),
+    user_id: Joi.string().uuid().optional(),
+  });
 
-  const { error } = schema.validate(validationData);
+  const { error: queryError, value: validatedQuery } = querySchema.validate(
+    req.query
+  );
 
-  if (error) {
-    return res.status(400).json({ error: error.details[0].message });
+  if (queryError) {
+    return res.status(400).json({ error: queryError.details[0].message });
   }
+
+  const { error: bodyError, value: validatedBody } = bodySchema.validate(
+    req.body
+  );
+
+  if (bodyError) {
+    return res.status(400).json({ error: bodyError.details[0].message });
+  }
+
+  req.query = validatedQuery;
+  req.body = validatedBody;
 
   next();
 }
