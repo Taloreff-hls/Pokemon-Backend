@@ -42,8 +42,5 @@ async function getPokemons(options: PokemonQueryOptions) {
     pokemonIds: listedIds,
   });
 
-  if (!pokemons || pokemons.length === 0) {
-    throw new Error("No available pokemons");
-  }
-  return pokemons;
+  return pokemons || [];
 }
