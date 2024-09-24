@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import { pokemonService } from "../service/pokemons.service";
+import { SortBy, SortOrder } from "../interfaces/sort.interfaces";
 
 export const pokemonController = {
   getRandomPokemon,
+  getPokemons,
 };
 
 async function getRandomPokemon(req: Request, res: Response) {
@@ -23,5 +25,31 @@ async function getRandomPokemon(req: Request, res: Response) {
     return res
       .status(500)
       .json({ error: "An error occurred while fetching pokemons" });
+  }
+}
+
+async function getPokemons(req: Request, res: Response) {
+  try {
+    const { sort_by, sort_order, page, limit } = req.query;
+
+    const parsedPage = +page!;
+    const parsedLimit = +limit!;
+
+    const sortBy = sort_by as SortBy | undefined;
+    const sortOrder = sort_order as SortOrder | undefined;
+
+    const filters = req.body;
+
+    const pokemons = await pokemonService.getPokemons({
+      sortBy,
+      sortOrder,
+      page: parsedPage,
+      limit: parsedLimit,
+      filters,
+    });
+
+    res.json(pokemons);
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to fetch pokemons" });
   }
 }
