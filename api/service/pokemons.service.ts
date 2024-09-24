@@ -1,9 +1,11 @@
 import { pokemonRepository } from "../repository/pokemons.repository";
 import { userPokemonRepository } from "../repository/user-pokemon.repository";
 import { userRepository } from "../repository/users.repository";
+import { PokemonQueryOptions } from "../interfaces/sort.interfaces";
 
 export const pokemonService = {
   getRandomPokemon,
+  getPokemons,
   catchPokemon,
 };
 
@@ -24,6 +26,23 @@ async function getRandomPokemon(userId: string) {
   }
 
   return availablePokemons[0];
+}
+
+async function getPokemons(options: PokemonQueryOptions) {
+  const { filters } = options;
+
+  const listedIds = filters?.user_id
+    ? (await userPokemonRepository.getUserPokemons(filters.user_id)).map(
+        (pokemon) => pokemon.pokemon_id
+      )
+    : [];
+
+  const pokemons = await pokemonRepository.getPokemons({
+    ...options,
+    pokemonIds: listedIds,
+  });
+
+  return pokemons || [];
 }
 
 async function catchPokemon(userId: string, pokemonId: string) {
