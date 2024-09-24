@@ -12,14 +12,12 @@ export function buildPokemonFilterQuery({
 
   let filterQuery = Prisma.sql`WHERE 1=1`;
 
-  if (user_id) {
-    if (pokemonIds && pokemonIds.length === 0) {
-      filterQuery = Prisma.sql`${filterQuery} AND 1=0`;
-    } else if (pokemonIds && pokemonIds.length > 0) {
-      filterQuery = Prisma.sql`${filterQuery} AND p.id IN (${Prisma.join(
-        pokemonIds
-      )})`;
-    }
+  if (user_id && pokemonIds.length === 0) {
+    filterQuery = Prisma.sql`${filterQuery} AND 1=0`;
+  } else if (user_id && pokemonIds.length > 0) {
+    filterQuery = Prisma.sql`${filterQuery} AND p.id IN (${Prisma.join(
+      pokemonIds
+    )})`;
   }
 
   if (name) {
