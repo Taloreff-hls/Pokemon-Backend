@@ -21,7 +21,7 @@ async function checkUserOwnsPokemon(userId: string, pokemonId: string) {
       pokemon_id: pokemonId,
     },
   });
-  return result;
+  return result > 0;
 }
 
 async function addPokemonToUser(userId: string, pokemonId: string) {
