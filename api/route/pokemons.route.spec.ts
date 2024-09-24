@@ -824,7 +824,7 @@ describe("pokemons route tests", () => {
       });
 
       const response = await request(app)
-        .post("/pokemons?page=1&limit=3&sort=HP (High to low)")
+        .post("/pokemons?page=1&limit=3&sort_by=hp&sort_order=desc")
         .send({ name: "C", user_id: userId })
         .expect(200);
 
@@ -846,6 +846,52 @@ describe("pokemons route tests", () => {
     });
 
     it("should return an empty array for a user with no owned pokemons", async () => {
+      const anotherUser = await prisma.user.create({
+        data: {
+          email: "anotheruser@example.com",
+        },
+      });
+
+      await prisma.pokemon.createMany({
+        data: [
+          {
+            id: "1",
+            name: "Bulbasaur",
+            hp: 45,
+            attack: 49,
+            defense: 49,
+            speed: 45,
+            description: "A grass Pokémon",
+            image: "image_url",
+            type: ["Grass"],
+            abilities: ["Overgrow"],
+            height: "0.7 m",
+            weight: "6.9 kg",
+          },
+          {
+            id: "2",
+            name: "Charmander",
+            hp: 39,
+            attack: 52,
+            defense: 43,
+            speed: 65,
+            description: "A fire Pokémon",
+            image: "image_url",
+            type: ["Fire"],
+            abilities: ["Blaze"],
+            height: "0.6 m",
+            weight: "8.5 kg",
+          },
+        ],
+      });
+
+      await prisma.userPokemon.createMany({
+        data: [
+          { user_id: anotherUser.id, pokemon_id: "1" },
+          { user_id: anotherUser.id, pokemon_id: "2" },
+        ],
+      });
+
       const response = await request(app)
         .post("/pokemons")
         .send({ user_id: userId })

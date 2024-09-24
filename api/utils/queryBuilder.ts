@@ -17,7 +17,9 @@ export function buildPokemonQuery({
     WHERE 1=1
   `;
 
-  if (user_id && pokemonIds.length > 0) {
+  if (user_id && pokemonIds.length === 0) {
+    query += ` AND 1=0`;
+  } else if (user_id && pokemonIds.length > 0) {
     query += ` AND p.id IN (${pokemonIds.map((pid) => `'${pid}'`).join(", ")})`;
   }
 

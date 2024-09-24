@@ -35,7 +35,7 @@ async function getPokemons(options: PokemonQueryOptions) {
     ? (await userPokemonRepository.getUserPokemons(filters.user_id)).map(
         (pokemon) => pokemon.pokemon_id
       )
-    : undefined;
+    : [];
 
   const pokemons = await pokemonRepository.getPokemons({
     ...options,

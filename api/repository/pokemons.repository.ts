@@ -25,10 +25,14 @@ async function getRandomPokemon(listedIds: string[]) {
   return await prisma.$queryRaw<Pokemon[]>(query);
 }
 
-async function getPokemons(
-  { sortBy, sortOrder, page, limit, filters }: PokemonQueryOptions,
-  pokemonIds?: string[]
-) {
+async function getPokemons({
+  sortBy,
+  sortOrder,
+  page,
+  limit,
+  filters,
+  pokemonIds,
+}: PokemonQueryOptions) {
   const query = buildPokemonQuery({
     sortBy,
     sortOrder,
