@@ -41,7 +41,7 @@ async function getPokemons(req: Request, res: Response) {
 
     const filters = req.body;
 
-    const pokemons = await pokemonService.getPokemons({
+    const { pokemons, total } = await pokemonService.getPokemons({
       sortBy,
       sortOrder,
       page: parsedPage,
@@ -49,7 +49,10 @@ async function getPokemons(req: Request, res: Response) {
       filters,
     });
 
-    res.json(pokemons);
+    res.json({
+      pokemons,
+      total,
+    });
   } catch (error) {
     return res.status(500).json({ error: "Failed to fetch pokemons" });
   }

@@ -37,12 +37,12 @@ async function getPokemons(options: PokemonQueryOptions) {
       )
     : [];
 
-  const pokemons = await pokemonRepository.getPokemons({
+  const { pokemons, total } = await pokemonRepository.getPokemons({
     ...options,
     pokemonIds: listedIds,
   });
 
-  return pokemons || [];
+  return { pokemons: pokemons || [], total };
 }
 
 async function catchPokemon(userId: string, pokemonId: string) {

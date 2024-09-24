@@ -283,9 +283,11 @@ describe("pokemons route tests", () => {
         .post("/pokemons")
         .send({})
         .expect(200);
-      expect(response.body).toHaveLength(5);
 
-      response.body.forEach((pokemon: Pokemon) => {
+      const { pokemons } = response.body;
+      expect(pokemons).toHaveLength(5);
+
+      pokemons.forEach((pokemon: Pokemon) => {
         expect(pokemon).toHaveProperty("id");
         expect(pokemon).toHaveProperty("name");
         expect(pokemon).toHaveProperty("type");
@@ -300,15 +302,15 @@ describe("pokemons route tests", () => {
         expect(pokemon).toHaveProperty("weight");
       });
 
-      expect(response.body[0].name).toBe("Bulbasaur");
-      expect(response.body[0].hp).toBe(45);
-      expect(response.body[0].type).toEqual(["Grass"]);
-      expect(response.body[0].abilities).toEqual(["Overgrow"]);
-      expect(response.body[0].height).toBe("0.7 m");
-      expect(response.body[0].weight).toBe("6.9 kg");
+      expect(pokemons[0].name).toBe("Bulbasaur");
+      expect(pokemons[0].hp).toBe(45);
+      expect(pokemons[0].type).toEqual(["Grass"]);
+      expect(pokemons[0].abilities).toEqual(["Overgrow"]);
+      expect(pokemons[0].height).toBe("0.7 m");
+      expect(pokemons[0].weight).toBe("6.9 kg");
 
-      expect(response.body[4].name).toBe("Squirtle");
-      expect(response.body[4].hp).toBe(44);
+      expect(pokemons[4].name).toBe("Squirtle");
+      expect(pokemons[4].hp).toBe(44);
     });
 
     it("should return sorted results by name in ascending order", async () => {
@@ -391,8 +393,10 @@ describe("pokemons route tests", () => {
         .post("/pokemons?sort_by=name&sort_order=asc")
         .expect(200);
 
-      expect(response.body[0].name).toBe("Bulbasaur");
-      expect(response.body[4].name).toBe("Squirtle");
+      const { pokemons } = response.body;
+
+      expect(pokemons[0].name).toBe("Bulbasaur");
+      expect(pokemons[4].name).toBe("Squirtle");
     });
 
     it("should return sorted results by name in descending order", async () => {
@@ -475,8 +479,10 @@ describe("pokemons route tests", () => {
         .post("/pokemons?sort_by=name&sort_order=desc")
         .expect(200);
 
-      expect(response.body[0].name).toBe("Squirtle");
-      expect(response.body[4].name).toBe("Bulbasaur");
+      const { pokemons } = response.body;
+
+      expect(pokemons[0].name).toBe("Squirtle");
+      expect(pokemons[4].name).toBe("Bulbasaur");
     });
 
     it("should return sorted results by hp in ascending order", async () => {
@@ -559,8 +565,10 @@ describe("pokemons route tests", () => {
         .post("/pokemons?sort_by=hp&sort_order=asc")
         .expect(200);
 
-      expect(response.body[0].name).toBe("Bulbasaur");
-      expect(response.body[4].name).toBe("Pikachu");
+      const { pokemons } = response.body;
+
+      expect(pokemons[0].name).toBe("Bulbasaur");
+      expect(pokemons[4].name).toBe("Pikachu");
     });
 
     it("should return sorted results by hp in descending order", async () => {
@@ -643,8 +651,10 @@ describe("pokemons route tests", () => {
         .post("/pokemons?sort_by=hp&sort_order=desc")
         .expect(200);
 
-      expect(response.body[0].name).toBe("Pikachu");
-      expect(response.body[4].name).toBe("Bulbasaur");
+      const { pokemons } = response.body;
+
+      expect(pokemons[0].name).toBe("Pikachu");
+      expect(pokemons[4].name).toBe("Bulbasaur");
     });
 
     it("should return sorted results by attack in ascending order", async () => {
@@ -727,8 +737,10 @@ describe("pokemons route tests", () => {
         .post("/pokemons?sort_by=attack&sort_order=asc")
         .expect(200);
 
-      expect(response.body[0].name).toBe("Caterpie");
-      expect(response.body[4].name).toBe("Bulbasaur");
+      const { pokemons } = response.body;
+
+      expect(pokemons[0].name).toBe("Caterpie");
+      expect(pokemons[4].name).toBe("Bulbasaur");
     });
 
     it("should return sorted results by attack in descending order", async () => {
@@ -811,8 +823,10 @@ describe("pokemons route tests", () => {
         .post("/pokemons?sort_by=attack&sort_order=desc")
         .expect(200);
 
-      expect(response.body[0].name).toBe("Bulbasaur");
-      expect(response.body[4].name).toBe("Caterpie");
+      const { pokemons } = response.body;
+
+      expect(pokemons[0].name).toBe("Bulbasaur");
+      expect(pokemons[4].name).toBe("Caterpie");
     });
 
     it("should return filtered results", async () => {
@@ -896,8 +910,10 @@ describe("pokemons route tests", () => {
         .send({ name: "Pikachu" })
         .expect(200);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].name).toBe("Pikachu");
+      const { pokemons } = response.body;
+
+      expect(pokemons).toHaveLength(1);
+      expect(pokemons[0].name).toBe("Pikachu");
     });
 
     it("should return paginated results with custom page and limit", async () => {
@@ -980,8 +996,10 @@ describe("pokemons route tests", () => {
         .post("/pokemons?page=2&limit=2")
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
-      expect(response.body[0].name).not.toBe("Bulbasaur");
+      const { pokemons } = response.body;
+
+      expect(pokemons).toHaveLength(2);
+      expect(pokemons[0].name).not.toBe("Bulbasaur");
     });
 
     it("should return user-specific Pokemons when userId is provided", async () => {
@@ -1072,12 +1090,14 @@ describe("pokemons route tests", () => {
         .send({ user_id: userId })
         .expect(200);
 
-      expect(response.body).toHaveLength(2);
+      const { pokemons } = response.body;
+
+      expect(pokemons).toHaveLength(2);
       expect(
-        response.body.some((p: Pokemon) => p.name === "Bulbasaur")
+        pokemons.some((p: Pokemon) => p.name === "Bulbasaur")
       ).toBeTruthy();
       expect(
-        response.body.some((p: Pokemon) => p.name === "Charmander")
+        pokemons.some((p: Pokemon) => p.name === "Charmander")
       ).toBeTruthy();
     });
 
@@ -1243,12 +1263,13 @@ describe("pokemons route tests", () => {
         .send({ name: "C", user_id: userId })
         .expect(200);
 
-      expect(response.body).toHaveLength(3);
-      expect(response.body[0].name).toBe("Cobalion");
-      expect(response.body[0].hp).toBe(115);
+      const { pokemons } = response.body;
+      expect(pokemons).toHaveLength(3);
+      expect(pokemons[0].name).toBe("Cobalion");
+      expect(pokemons[0].hp).toBe(115);
 
-      expect(response.body[1].name).toBe("Claydol");
-      expect(response.body[1].hp).toBe(100);
+      expect(pokemons[1].name).toBe("Claydol");
+      expect(pokemons[1].hp).toBe(100);
     });
 
     it("should return an empty array if there are no Pokémon in the table", async () => {
@@ -1257,7 +1278,8 @@ describe("pokemons route tests", () => {
         .send({ name: "CCC" })
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      const { pokemons } = response.body;
+      expect(pokemons).toEqual([]);
     });
 
     it("should return an empty array for a user with no owned pokemons", async () => {
@@ -1312,7 +1334,9 @@ describe("pokemons route tests", () => {
         .send({ user_id: userId })
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      const { pokemons } = response.body;
+
+      expect(pokemons).toEqual([]);
     });
 
     it("should return a 400 error for invalid pagination values", async () => {
@@ -1471,7 +1495,9 @@ describe("pokemons route tests", () => {
         .post("/pokemons?page=3&limit=10")
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      const { pokemons } = response.body;
+
+      expect(pokemons).toEqual([]);
     });
 
     it("should return a 400 error for an invalid sort option", async () => {
