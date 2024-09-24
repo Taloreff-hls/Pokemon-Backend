@@ -311,7 +311,7 @@ describe("pokemons route tests", () => {
       expect(response.body[4].hp).toBe(44);
     });
 
-    it("should return sorted results", async () => {
+    it("should return sorted results by name in ascending order", async () => {
       await prisma.pokemon.createMany({
         data: [
           {
@@ -387,17 +387,432 @@ describe("pokemons route tests", () => {
         ],
       });
 
-      const AlphabeticalAsc = await request(app)
+      const response = await request(app)
         .post("/pokemons?sort_by=name&sort_order=asc")
         .expect(200);
 
-      expect(AlphabeticalAsc.body[0].name).toBe("Bulbasaur");
+      expect(response.body[0].name).toBe("Bulbasaur");
+      expect(response.body[4].name).toBe("Squirtle");
+    });
 
-      const HPDesc = await request(app)
+    it("should return sorted results by name in descending order", async () => {
+      await prisma.pokemon.createMany({
+        data: [
+          {
+            id: "1",
+            name: "Charmander",
+            hp: 45,
+            attack: 49,
+            defense: 49,
+            speed: 45,
+            description: "A grass Pokémon",
+            image: "image_url",
+            type: ["Grass"],
+            abilities: ["Overgrow"],
+            height: "0.7 m",
+            weight: "6.9 kg",
+          },
+          {
+            id: "2",
+            name: "Bulbasaur",
+            hp: 39,
+            attack: 52,
+            defense: 43,
+            speed: 65,
+            description: "A fire Pokémon",
+            image: "image_url",
+            type: ["Fire"],
+            abilities: ["Blaze"],
+            height: "0.6 m",
+            weight: "8.5 kg",
+          },
+          {
+            id: "3",
+            name: "Squirtle",
+            hp: 44,
+            attack: 48,
+            defense: 65,
+            speed: 43,
+            description: "A water Pokémon",
+            image: "image_url",
+            type: ["Water"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+          {
+            id: "4",
+            name: "Caterpie",
+            hp: 40,
+            attack: 50,
+            defense: 60,
+            speed: 70,
+            description: "A water Pokémon",
+            image: "image_url",
+            type: ["Water"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+          {
+            id: "5",
+            name: "Pikachu",
+            hp: 100,
+            attack: 48,
+            defense: 65,
+            speed: 43,
+            description: "A electric Pokémon",
+            image: "image_url",
+            type: ["Electric"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+        ],
+      });
+
+      const response = await request(app)
+        .post("/pokemons?sort_by=name&sort_order=desc")
+        .expect(200);
+
+      expect(response.body[0].name).toBe("Squirtle");
+      expect(response.body[4].name).toBe("Bulbasaur");
+    });
+
+    it("should return sorted results by hp in ascending order", async () => {
+      await prisma.pokemon.createMany({
+        data: [
+          {
+            id: "1",
+            name: "Charmander",
+            hp: 45,
+            attack: 49,
+            defense: 49,
+            speed: 45,
+            description: "A grass Pokémon",
+            image: "image_url",
+            type: ["Grass"],
+            abilities: ["Overgrow"],
+            height: "0.7 m",
+            weight: "6.9 kg",
+          },
+          {
+            id: "2",
+            name: "Bulbasaur",
+            hp: 39,
+            attack: 52,
+            defense: 43,
+            speed: 65,
+            description: "A fire Pokémon",
+            image: "image_url",
+            type: ["Fire"],
+            abilities: ["Blaze"],
+            height: "0.6 m",
+            weight: "8.5 kg",
+          },
+          {
+            id: "3",
+            name: "Squirtle",
+            hp: 44,
+            attack: 48,
+            defense: 65,
+            speed: 43,
+            description: "A water Pokémon",
+            image: "image_url",
+            type: ["Water"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+          {
+            id: "4",
+            name: "Caterpie",
+            hp: 40,
+            attack: 50,
+            defense: 60,
+            speed: 70,
+            description: "A water Pokémon",
+            image: "image_url",
+            type: ["Water"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+          {
+            id: "5",
+            name: "Pikachu",
+            hp: 100,
+            attack: 48,
+            defense: 65,
+            speed: 43,
+            description: "A electric Pokémon",
+            image: "image_url",
+            type: ["Electric"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+        ],
+      });
+
+      const response = await request(app)
+        .post("/pokemons?sort_by=hp&sort_order=asc")
+        .expect(200);
+
+      expect(response.body[0].name).toBe("Bulbasaur");
+      expect(response.body[4].name).toBe("Pikachu");
+    });
+
+    it("should return sorted results by hp in descending order", async () => {
+      await prisma.pokemon.createMany({
+        data: [
+          {
+            id: "1",
+            name: "Charmander",
+            hp: 45,
+            attack: 49,
+            defense: 49,
+            speed: 45,
+            description: "A grass Pokémon",
+            image: "image_url",
+            type: ["Grass"],
+            abilities: ["Overgrow"],
+            height: "0.7 m",
+            weight: "6.9 kg",
+          },
+          {
+            id: "2",
+            name: "Bulbasaur",
+            hp: 39,
+            attack: 52,
+            defense: 43,
+            speed: 65,
+            description: "A fire Pokémon",
+            image: "image_url",
+            type: ["Fire"],
+            abilities: ["Blaze"],
+            height: "0.6 m",
+            weight: "8.5 kg",
+          },
+          {
+            id: "3",
+            name: "Squirtle",
+            hp: 44,
+            attack: 48,
+            defense: 65,
+            speed: 43,
+            description: "A water Pokémon",
+            image: "image_url",
+            type: ["Water"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+          {
+            id: "4",
+            name: "Caterpie",
+            hp: 40,
+            attack: 50,
+            defense: 60,
+            speed: 70,
+            description: "A water Pokémon",
+            image: "image_url",
+            type: ["Water"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+          {
+            id: "5",
+            name: "Pikachu",
+            hp: 100,
+            attack: 48,
+            defense: 65,
+            speed: 43,
+            description: "A electric Pokémon",
+            image: "image_url",
+            type: ["Electric"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+        ],
+      });
+
+      const response = await request(app)
         .post("/pokemons?sort_by=hp&sort_order=desc")
         .expect(200);
 
-      expect(HPDesc.body[0].name).toBe("Pikachu");
+      expect(response.body[0].name).toBe("Pikachu");
+      expect(response.body[4].name).toBe("Bulbasaur");
+    });
+
+    it("should return sorted results by attack in ascending order", async () => {
+      await prisma.pokemon.createMany({
+        data: [
+          {
+            id: "1",
+            name: "Charmander",
+            hp: 45,
+            attack: 49,
+            defense: 49,
+            speed: 45,
+            description: "A grass Pokémon",
+            image: "image_url",
+            type: ["Grass"],
+            abilities: ["Overgrow"],
+            height: "0.7 m",
+            weight: "6.9 kg",
+          },
+          {
+            id: "2",
+            name: "Bulbasaur",
+            hp: 39,
+            attack: 52,
+            defense: 43,
+            speed: 65,
+            description: "A fire Pokémon",
+            image: "image_url",
+            type: ["Fire"],
+            abilities: ["Blaze"],
+            height: "0.6 m",
+            weight: "8.5 kg",
+          },
+          {
+            id: "3",
+            name: "Squirtle",
+            hp: 44,
+            attack: 48,
+            defense: 65,
+            speed: 43,
+            description: "A water Pokémon",
+            image: "image_url",
+            type: ["Water"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+          {
+            id: "4",
+            name: "Caterpie",
+            hp: 40,
+            attack: 40,
+            defense: 60,
+            speed: 70,
+            description: "A water Pokémon",
+            image: "image_url",
+            type: ["Water"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+          {
+            id: "5",
+            name: "Pikachu",
+            hp: 100,
+            attack: 48,
+            defense: 65,
+            speed: 43,
+            description: "A electric Pokémon",
+            image: "image_url",
+            type: ["Electric"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+        ],
+      });
+
+      const response = await request(app)
+        .post("/pokemons?sort_by=attack&sort_order=asc")
+        .expect(200);
+
+      expect(response.body[0].name).toBe("Caterpie");
+      expect(response.body[4].name).toBe("Bulbasaur");
+    });
+
+    it("should return sorted results by attack in descending order", async () => {
+      await prisma.pokemon.createMany({
+        data: [
+          {
+            id: "1",
+            name: "Charmander",
+            hp: 45,
+            attack: 49,
+            defense: 49,
+            speed: 45,
+            description: "A grass Pokémon",
+            image: "image_url",
+            type: ["Grass"],
+            abilities: ["Overgrow"],
+            height: "0.7 m",
+            weight: "6.9 kg",
+          },
+          {
+            id: "2",
+            name: "Bulbasaur",
+            hp: 39,
+            attack: 52,
+            defense: 43,
+            speed: 65,
+            description: "A fire Pokémon",
+            image: "image_url",
+            type: ["Fire"],
+            abilities: ["Blaze"],
+            height: "0.6 m",
+            weight: "8.5 kg",
+          },
+          {
+            id: "3",
+            name: "Squirtle",
+            hp: 44,
+            attack: 48,
+            defense: 65,
+            speed: 43,
+            description: "A water Pokémon",
+            image: "image_url",
+            type: ["Water"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+          {
+            id: "4",
+            name: "Caterpie",
+            hp: 40,
+            attack: 40,
+            defense: 60,
+            speed: 70,
+            description: "A water Pokémon",
+            image: "image_url",
+            type: ["Water"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+          {
+            id: "5",
+            name: "Pikachu",
+            hp: 100,
+            attack: 48,
+            defense: 65,
+            speed: 43,
+            description: "A electric Pokémon",
+            image: "image_url",
+            type: ["Electric"],
+            abilities: ["Torrent"],
+            height: "0.5 m",
+            weight: "9.0 kg",
+          },
+        ],
+      });
+
+      const response = await request(app)
+        .post("/pokemons?sort_by=attack&sort_order=desc")
+        .expect(200);
+
+      expect(response.body[0].name).toBe("Bulbasaur");
+      expect(response.body[4].name).toBe("Caterpie");
     });
 
     it("should return filtered results", async () => {
@@ -1062,6 +1477,15 @@ describe("pokemons route tests", () => {
     it("should return a 400 error for an invalid sort option", async () => {
       const response = await request(app)
         .post("/pokemons?sort=Invalid")
+        .expect(400);
+
+      expect(response.body).toHaveProperty("error");
+    });
+
+    it("should return a 400 error for an invalid filter option", async () => {
+      const response = await request(app)
+        .post("/pokemons")
+        .send({ invalidFilter: "InvalidValue" })
         .expect(400);
 
       expect(response.body).toHaveProperty("error");
