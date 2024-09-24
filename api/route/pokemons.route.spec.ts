@@ -284,19 +284,32 @@ describe("pokemons route tests", () => {
         .post("/pokemons")
         .send({})
         .expect(200);
+      expect(response.body).toHaveLength(5);
 
-      expect(response.body[0]).toHaveProperty("id");
-      expect(response.body[0]).toHaveProperty("name");
-      expect(response.body[0]).toHaveProperty("type");
-      expect(response.body[0]).toHaveProperty("hp");
-      expect(response.body[0]).toHaveProperty("attack");
-      expect(response.body[0]).toHaveProperty("defense");
-      expect(response.body[0]).toHaveProperty("speed");
-      expect(response.body[0]).toHaveProperty("description");
-      expect(response.body[0]).toHaveProperty("image");
-      expect(response.body[0]).toHaveProperty("abilities");
-      expect(response.body[0]).toHaveProperty("height");
-      expect(response.body[0]).toHaveProperty("weight");
+      response.body.forEach((pokemon: Pokemon) => {
+        expect(pokemon).toHaveProperty("id");
+        expect(pokemon).toHaveProperty("name");
+        expect(pokemon).toHaveProperty("type");
+        expect(pokemon).toHaveProperty("hp");
+        expect(pokemon).toHaveProperty("attack");
+        expect(pokemon).toHaveProperty("defense");
+        expect(pokemon).toHaveProperty("speed");
+        expect(pokemon).toHaveProperty("description");
+        expect(pokemon).toHaveProperty("image");
+        expect(pokemon).toHaveProperty("abilities");
+        expect(pokemon).toHaveProperty("height");
+        expect(pokemon).toHaveProperty("weight");
+      });
+
+      expect(response.body[0].name).toBe("Bulbasaur");
+      expect(response.body[0].hp).toBe(45);
+      expect(response.body[0].type).toEqual(["Grass"]);
+      expect(response.body[0].abilities).toEqual(["Overgrow"]);
+      expect(response.body[0].height).toBe("0.7 m");
+      expect(response.body[0].weight).toBe("6.9 kg");
+
+      expect(response.body[4].name).toBe("Pikachu");
+      expect(response.body[4].hp).toBe(44);
     });
 
     it("should return sorted results", async () => {
