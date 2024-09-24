@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { pokemonService } from "../service/pokemons.service";
-import { mapSortOption } from "../utils/sortOptions";
+import { SortBy, SortOrder } from "../interfaces/sort.interfaces";
 
 export const pokemonController = {
   getRandomPokemon,
@@ -30,17 +30,19 @@ async function getRandomPokemon(req: Request, res: Response) {
 
 async function getPokemons(req: Request, res: Response) {
   try {
-    const { sort, page, limit } = req.query;
+    const { sort_by, sort_order, page, limit } = req.query;
 
     const parsedPage = +page!;
     const parsedLimit = +limit!;
 
-    const mappedSort = sort ? mapSortOption(sort as string) : undefined;
+    const sortBy = sort_by as SortBy | undefined;
+    const sortOrder = sort_order as SortOrder | undefined;
 
     const filters = req.body;
 
     const pokemons = await pokemonService.getPokemons({
-      sort: mappedSort,
+      sortBy,
+      sortOrder,
       page: parsedPage,
       limit: parsedLimit,
       filters,

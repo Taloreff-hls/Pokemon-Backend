@@ -37,7 +37,10 @@ async function getPokemons(options: PokemonQueryOptions) {
       )
     : undefined;
 
-  const pokemons = await pokemonRepository.getPokemons(options, listedIds);
+  const pokemons = await pokemonRepository.getPokemons({
+    ...options,
+    pokemonIds: listedIds,
+  });
 
   if (!pokemons || pokemons.length === 0) {
     throw new Error("No available pokemons");

@@ -1,7 +1,8 @@
 import { PokemonQueryOptions } from "../interfaces/sort.interfaces";
 
 export function buildPokemonQuery({
-  sort,
+  sortBy,
+  sortOrder,
   page,
   limit,
   filters,
@@ -24,8 +25,8 @@ export function buildPokemonQuery({
     query += ` AND p.name ILIKE '%${name}%'`;
   }
 
-  if (sort) {
-    query += ` ORDER BY ${sort.field} ${sort.order.toUpperCase()}`;
+  if (sortBy && sortOrder) {
+    query += ` ORDER BY ${sortBy} ${sortOrder.toUpperCase()}`;
   }
 
   query += ` LIMIT ${limit} OFFSET ${skip}`;

@@ -25,16 +25,8 @@ function validateGetRandomPokemon(
 
 function validateGetPokemons(req: Request, res: Response, next: NextFunction) {
   const querySchema = Joi.object({
-    sort: Joi.string()
-      .valid(
-        "Alphabetical A-Z",
-        "Alphabetical Z-A",
-        "Power (High to low)",
-        "Power (Low to high)",
-        "HP (High to low)",
-        "HP (Low to high)"
-      )
-      .optional(),
+    sort_by: Joi.string().valid("name", "hp", "attack").optional(),
+    sort_order: Joi.string().valid("asc", "desc").optional(),
     page: Joi.number().integer().min(1).default(1),
     limit: Joi.number().integer().min(1).max(100).default(10),
   });

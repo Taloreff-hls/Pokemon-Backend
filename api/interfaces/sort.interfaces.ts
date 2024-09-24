@@ -1,9 +1,6 @@
 export type SortOrder = "asc" | "desc";
 
-export interface SortOption {
-  field: "name" | "hp" | "attack";
-  order: SortOrder;
-}
+export type SortBy = "name" | "hp" | "attack";
 
 export interface Filters {
   name?: string;
@@ -11,7 +8,8 @@ export interface Filters {
 }
 
 export interface PokemonQueryOptions {
-  sort?: SortOption;
+  sortBy?: SortBy;
+  sortOrder?: SortOrder;
   page: number;
   limit: number;
   filters?: Filters;

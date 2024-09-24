@@ -203,7 +203,6 @@ describe("pokemons route tests", () => {
       });
       userId = user.id;
     });
-
     it("should return paginated results with default values", async () => {
       await prisma.pokemon.createMany({
         data: [
@@ -317,7 +316,7 @@ describe("pokemons route tests", () => {
         data: [
           {
             id: "1",
-            name: "Bulbasaur",
+            name: "Charmander",
             hp: 45,
             attack: 49,
             defense: 49,
@@ -331,7 +330,7 @@ describe("pokemons route tests", () => {
           },
           {
             id: "2",
-            name: "Charmander",
+            name: "Bulbasaur",
             hp: 39,
             attack: 52,
             defense: 43,
@@ -389,13 +388,13 @@ describe("pokemons route tests", () => {
       });
 
       const AlphabeticalAsc = await request(app)
-        .post("/pokemons?sort=Alphabetical A-Z")
+        .post("/pokemons?sort_by=name&sort_order=asc")
         .expect(200);
 
       expect(AlphabeticalAsc.body[0].name).toBe("Bulbasaur");
 
       const HPDesc = await request(app)
-        .post("/pokemons?sort=HP (High to low)")
+        .post("/pokemons?sort_by=hp&sort_order=desc")
         .expect(200);
 
       expect(HPDesc.body[0].name).toBe("Pikachu");

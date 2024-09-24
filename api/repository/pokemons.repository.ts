@@ -26,11 +26,12 @@ async function getRandomPokemon(listedIds: string[]) {
 }
 
 async function getPokemons(
-  { sort, page, limit, filters }: PokemonQueryOptions,
+  { sortBy, sortOrder, page, limit, filters }: PokemonQueryOptions,
   pokemonIds?: string[]
 ) {
   const query = buildPokemonQuery({
-    sort,
+    sortBy,
+    sortOrder,
     page,
     limit,
     filters,
