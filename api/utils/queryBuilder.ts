@@ -1,37 +1,32 @@
-import { PokemonQueryOptions } from "../interfaces/sort.interfaces";
+import { Prisma } from "@prisma/client";
+import { Filters } from "../interfaces/sort.interfaces";
 
-export function buildPokemonQuery({
-  sortBy,
-  sortOrder,
-  page,
-  limit,
+export function buildPokemonFilterQuery({
   filters,
   pokemonIds = [],
-}: PokemonQueryOptions) {
-  const skip = (page - 1) * limit;
+}: {
+  filters?: Filters;
+  pokemonIds?: string[];
+}) {
   const { name, user_id } = filters || {};
 
-  let query = `
-    SELECT p.*
-    FROM "Pokemon" p
-    WHERE 1=1
-  `;
+  let filterQuery = Prisma.sql`WHERE 1=1`;
 
-  if (user_id && pokemonIds.length === 0) {
-    query += ` AND 1=0`;
-  } else if (user_id && pokemonIds.length > 0) {
-    query += ` AND p.id IN (${pokemonIds.map((pid) => `'${pid}'`).join(", ")})`;
+  if (user_id) {
+    if (pokemonIds && pokemonIds.length === 0) {
+      filterQuery = Prisma.sql`${filterQuery} AND 1=0`;
+    } else if (pokemonIds && pokemonIds.length > 0) {
+      filterQuery = Prisma.sql`${filterQuery} AND p.id IN (${Prisma.join(
+        pokemonIds
+      )})`;
+    }
   }
 
   if (name) {
-    query += ` AND p.name ILIKE '%${name}%'`;
+    filterQuery = Prisma.sql`${filterQuery} AND p.name ILIKE ${
+      "%" + name + "%"
+    }`;
   }
 
-  if (sortBy && sortOrder) {
-    query += ` ORDER BY ${sortBy} ${sortOrder.toUpperCase()}`;
-  }
-
-  query += ` LIMIT ${limit} OFFSET ${skip}`;
-
-  return query;
+  return filterQuery;
 }

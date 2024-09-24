@@ -307,7 +307,7 @@ describe("pokemons route tests", () => {
       expect(response.body[0].height).toBe("0.7 m");
       expect(response.body[0].weight).toBe("6.9 kg");
 
-      expect(response.body[4].name).toBe("Pikachu");
+      expect(response.body[4].name).toBe("Squirtle");
       expect(response.body[4].hp).toBe(44);
     });
 

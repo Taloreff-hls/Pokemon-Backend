@@ -2,7 +2,7 @@ import { Pokemon } from "../interfaces/pokemons.interfaces";
 import { PokemonQueryOptions } from "../interfaces/sort.interfaces";
 import { prisma } from "../utils/prisma";
 import { Prisma } from "@prisma/client";
-import { buildPokemonQuery } from "../utils/queryBuilder";
+import { buildPokemonFilterQuery } from "../utils/queryBuilder";
 
 export const pokemonRepository = {
   getRandomPokemon,
@@ -33,14 +33,18 @@ async function getPokemons({
   filters,
   pokemonIds,
 }: PokemonQueryOptions) {
-  const query = buildPokemonQuery({
-    sortBy,
-    sortOrder,
-    page,
-    limit,
-    filters,
-    pokemonIds,
-  });
+  const filterQuery = buildPokemonFilterQuery({ filters, pokemonIds });
 
-  return await prisma.$queryRawUnsafe<Pokemon[]>(query);
+  const query = Prisma.sql`
+    SELECT p.*
+    FROM "Pokemon" p
+    ${filterQuery}
+    ORDER BY ${Prisma.raw(sortBy || "name")} ${Prisma.raw(
+    sortOrder?.toUpperCase() || "ASC"
+  )}
+    LIMIT ${limit}
+    OFFSET ${(page - 1) * limit}
+  `;
+
+  return await prisma.$queryRaw<Pokemon[]>(query);
 }
