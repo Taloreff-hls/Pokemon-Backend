@@ -42,7 +42,6 @@ const swaggerOptions = {
   apis: ["./api/route/*.ts"],
 };
 
-// Initialize Swagger docs
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 

@@ -7,6 +7,7 @@ import { buildPokemonFilterQuery } from "../utils/queryBuilder";
 export const pokemonRepository = {
   getRandomPokemon,
   getPokemons,
+  checkPokemonExists,
 };
 
 async function getRandomPokemon(listedIds: string[]) {
@@ -45,6 +46,23 @@ async function getPokemons({
     LIMIT ${limit}
     OFFSET ${(page - 1) * limit}
   `;
+  const pokemons = await prisma.$queryRaw<Pokemon[]>(query);
 
-  return await prisma.$queryRaw<Pokemon[]>(query);
+  const countQuery = Prisma.sql`
+    SELECT COUNT(*)
+    FROM "Pokemon" p
+    ${filterQuery}
+  `;
+  const total = await prisma.$queryRaw<{ count: bigint }[]>(countQuery);
+
+  return { pokemons, total: Number(total[0]?.count || 0) };
+}
+
+async function checkPokemonExists(pokemonId: string) {
+  const count = await prisma.pokemon.count({
+    where: {
+      id: pokemonId,
+    },
+  });
+  return count > 0;
 }
